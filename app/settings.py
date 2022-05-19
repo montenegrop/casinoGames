@@ -37,6 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # mias
+
+    'testApi',
+    'testModel',
+
+    #mis-pip
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
