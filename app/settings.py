@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'testApi',
     'testModel',
+    'machine',
 
     #mis-pip
     'rest_framework',

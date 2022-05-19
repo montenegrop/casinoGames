@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class JugadaTest(models.Model):
+class JugadaTest(models.Model) :
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='jugadas')
     played_date = models.DateField(default=timezone.now)
     # roll = models.JSONField()
