@@ -16,6 +16,3 @@ class JugadaDetail(generics.RetrieveDestroyAPIView):
     serializer_class = JugadaSerializer
 
     # lookup_field = 'numero'
-
-
-x = 2 + 2
