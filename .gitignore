@@ -130,3 +130,5 @@ dmypy.json
 
 # mias
 .casinoVenv/
+venv/
+.venv/

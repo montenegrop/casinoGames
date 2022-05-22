@@ -11,3 +11,8 @@ class JugadaTest(models.Model):
     played_date = models.DateField(default=timezone.now)
     # roll = models.JSONField()
     roll_string = models.CharField(max_length=100)
+
+    bet = models.FloatField(verbose_name="bet", default=0)
+
+    # corregir:
+    # agregar identificador de configuracion de maquina
