@@ -1,0 +1,8 @@
+{
+    "[python]": {
+        // "editor.wordBasedSuggestions": false,
+        "editor.formatOnSave": true,
+        // "editor.codeLens": true
+    },
+    "editor.defaultFormatter": "ms-python.python"
+}
