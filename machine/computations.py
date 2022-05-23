@@ -75,8 +75,6 @@ for symbol in visible_output[0]:
     wins.append(symbol_dict)
     total_win += symbol_win
 
-print(wins, total_win)
-
 
 # computando linea1
 # simbolos en linea1
