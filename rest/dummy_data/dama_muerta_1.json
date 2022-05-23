@@ -1,62 +1,28 @@
 {
-    "api_version": "2",
-    "outcome": {
-        "screen": [
-            [
-                "9",
-                "3",
-                "6"
-            ],
-            [
-                "3",
-                "8",
-                "6"
-            ],
-            [
-                "7",
-                "4",
-                "6"
-            ],
-            [
-                "7",
-                "5",
-                "9"
-            ],
-            [
-                "11",
-                "1",
-                "7"
-            ]
-        ],
-        "special_symbols": {},
-        "bet": 10,
-        "win": 10,
-        "wins": [
-            [
-                "line",
-                10,
-                [
-                    2,
-                    2,
-                    2
-                ],
-                2
-            ]
-        ],
-        "storage": null
-    },
-    "balance": {
-        "game": 10,
-        "wallet": 99430
-    },
-    "flow": {
-        "round_id": 9431121531,
-        "last_action_id": "9431121531_1",
-        "state": "closed",
-        "command": "spin",
-        "available_actions": [
-            "init",
-            "spin"
-        ]
-    }
+  "api_version": "2",
+  "outcome": {
+    "screen": [
+      ["9", "3", "6"],
+      ["3", "8", "6"],
+      ["7", "4", "6"],
+      ["7", "5", "9"],
+      ["11", "1", "7"]
+    ],
+    "special_symbols": {},
+    "bet": 10,
+    "win": 10,
+    "wins": [["line", 10, [2, 2, 2], 2]],
+    "storage": null
+  },
+  "balance": {
+    "game": 10,
+    "wallet": 99430
+  },
+  "flow": {
+    "round_id": 9431121531,
+    "last_action_id": "9431121531_1",
+    "state": "closed",
+    "command": "spin",
+    "available_actions": ["init", "spin"]
+  }
 }
