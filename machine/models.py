@@ -1,5 +1,7 @@
 from django.db import models
 
+from machine.computations import calculated_payment
+
 # Create your models here.
 
 
@@ -8,3 +10,6 @@ class machine(models.Model):
     configuration = models.CharField(max_length=10000, default="")
     # corregir:
     # ver si se puede mejorar
+
+    def payment(self, roll):
+        return calculated_payment(self, roll)

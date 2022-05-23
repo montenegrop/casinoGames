@@ -1,0 +1,25 @@
+{
+  "api_version": "2",
+  "outcome": {
+    "screen": [
+      ["8", "12", "9"],
+      ["1", "8", "9"],
+      ["10", "9", "1"],
+      ["11", "3", "9"],
+      ["9", "3", "8"]
+    ],
+    "special_symbols": { "scatter": { "12": [[0, 1]] } },
+    "bet": 100,
+    "win": 50,
+    "wins": [["line", 50, [2, 2, 1], 8]],
+    "storage": null
+  },
+  "balance": { "game": 50, "wallet": 99380 },
+  "flow": {
+    "round_id": 9481133571,
+    "last_action_id": "9481133571_1",
+    "state": "closed",
+    "command": "spin",
+    "available_actions": ["init", "spin"]
+  }
+}
