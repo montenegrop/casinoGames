@@ -1,4 +1,4 @@
-def payment(machine=None, roll=None):
+def payment(machine=None, roll=[0, 4, 6, 2, 0], bet=1):
 
     # Settings de maquina:
 
@@ -41,8 +41,7 @@ def payment(machine=None, roll=None):
 
     # roll: posicion del elemento superior visivble de cada reel redondo
     # valor i = 0, 1, 2, ..., len(reel_i) -1 ;limitados por la longitud de reeli menos 1: pensar
-    roll = [0, 4, 6, 2, 0]
-    bet = 1
+    # roll = [0, 4, 6, 2, 0]
 
     # mostrar en pantalla:
     visible_output = [reel_r[roll[index]: roll[index]+visible[index]]
@@ -77,7 +76,5 @@ def payment(machine=None, roll=None):
 
     # computando linea1
     # simbolos en linea1
-    symbolo1_index = -1 + lane1[0] + roll[0]
-    symbol_roll1_lane1 = reel1[symbolo1_index]
 
-    return wins
+    return dict(visible=visible_output, line_wins=wins, total_win=total_win)
