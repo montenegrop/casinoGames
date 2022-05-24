@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 import json
 
-from machine.computations import calculated_payment
+from machine.computations.victorious_payment import payment
 
 
 f = open("rest/dummy_data/dama_muerta_1.json", "r")
@@ -18,6 +18,6 @@ def dummy_casino_json(request):
 
 @api_view()
 def dummy_victorious_json(request):
-    wins = calculated_payment()
+    wins = payment()
     data = wins
     return Response(data)

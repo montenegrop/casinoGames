@@ -1,4 +1,4 @@
-def calculated_payment(machine=None, roll=None):
+def payment(machine=None, roll=None):
 
     # Settings de maquina:
 

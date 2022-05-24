@@ -1,6 +1,6 @@
 from django.db import models
 
-from machine.computations import calculated_payment
+from machine.computations import victorious_payment
 
 # Create your models here.
 
@@ -12,4 +12,4 @@ class machine(models.Model):
     # ver si se puede mejorar
 
     def payment(self, roll):
-        return calculated_payment(self, roll)
+        return victorious_payment(self, roll)
