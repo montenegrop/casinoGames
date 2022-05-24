@@ -5,7 +5,7 @@ from machine.computations import victorious_payment
 # Create your models here.
 
 
-class machine(models.Model):
+class Machine(models.Model):
     # identificar la maquina que estamos usando
     configuration = models.CharField(max_length=10000, default="")
     # corregir:
