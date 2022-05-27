@@ -2,8 +2,6 @@ def payment(machine=None, roll=[0, 4, 6, 2, 0], bet=1):
 
     # Settings de maquina:
 
-    symbols = {"A", "B", "C", "D", "E", "F"}
-
     # visible de cada reel
     visible = [3, 3, 3, 3, 3]
 
