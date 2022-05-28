@@ -13,6 +13,6 @@ app_name = 'jsons de prueba'
 urlpatterns = [
     path('dama_muerta/', dummy_casino_json, name='dama_muerta'),
     path('victorious_style/', dummy_victorious_json, name='victorious_style'),
-    path('realistic_victorious', realistic_victorious_json,
+    path('realistic_victorious/', realistic_victorious_json,
          name='realistic_victorious')
 ]

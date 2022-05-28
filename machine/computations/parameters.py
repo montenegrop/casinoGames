@@ -1,6 +1,10 @@
 # 12 símbolos
 # 11 comodín, 12 free spins
 # comodín solo aparece en reel 2 y 4
+from array import array
+from random_numbers import random_integer
+from random import choices
+
 symbols_1_3_5 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "L"]
 symbols_2_4 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 weight_12 = 100/12
@@ -9,7 +13,21 @@ equal_11 = (weight_11, weight_11, weight_11, weight_11, weight_11,
             weight_11, weight_11, weight_11, weight_11, weight_11, weight_11)
 equal_12 = (weight_12, weight_12, weight_12, weight_12, weight_12, weight_12,
             weight_12, weight_12, weight_12, weight_12, weight_12, weight_12)
-lengths = (100, 100, 100, 100, 100)
+symbols = {
+    "1": symbols_1_3_5,
+    "2": symbols_2_4,
+    "3": symbols_1_3_5,
+    "4": symbols_2_4,
+    "5": symbols_1_3_5
+}
+lengths = {
+    "1": 101,
+    "2": 102,
+    "3": 103,
+    "4": 104,
+    "5": 105
+}
+visible = [3, 3, 3, 3, 3]
 weights = {"1": equal_11,
            "2": equal_12,
            "3": equal_11,
@@ -30,3 +48,60 @@ payments = {
     "F": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
 }
 free_spins = [15, 20, 25]
+
+# mover a payments:
+
+# machine functions:
+
+
+def generate_reel(array, weights, length):
+    array_reel = choices(population=array, weights=weights, k=length)
+    return ''.join(array_reel)
+
+
+def generate_reels(symbols_dict, weights_dict, lengths_dict, total_reels=5):
+    return [generate_reel(symbols_dict[str(n)],
+                          weights_dict[str(n)], lengths_dict[str(n)]) for n in range(1, total_reels + 1)]
+
+
+def generate_reels_r(reels, visible):
+    return [reel + reel[0: visible[index]-1]
+            for (index, reel) in enumerate(reels)]
+
+# roll functions:
+
+
+def roll(lengths_dict, total_reels=5):
+    return [random_integer(0, lengths_dict[str(n)]) for n in range(1, total_reels + 1)]
+
+
+def visible(reels_r, roll, visible=[3, 3, 3, 3, 3]):
+    return [reel_r[roll[index]: roll[index]+visible[index]]
+            for (index, reel_r) in enumerate(reels_r)]
+
+
+def winning_chains(visible: array, total_reels=5, wild="K") -> dict:
+    chains = {}
+    v0 = visible[0]
+    potential = set(v0)
+    for symbol in potential:
+        chains[symbol] = [v0.index(symbol)]
+
+    reel_index = 1
+    while potential and reel_index < total_reels:
+        reel = visible[reel_index]
+        if not wild in reel:
+            potential = potential.intersection(set(reel))
+
+        keys = list(chains.keys())
+        for key in keys:
+            if not len(chains[key]) == reel_index:
+                continue
+            symbol = v0[chains[key][0]]
+            if wild in set(reel):
+                chains[key + "w" + str(reel_index)
+                       ] = chains[key] + [reel.index(wild)]
+            if symbol in potential.intersection(set(reel)):
+                chains[key].append(reel.index(symbol))
+        reel_index += 1
+    return chains
