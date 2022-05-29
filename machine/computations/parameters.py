@@ -4,6 +4,11 @@
 from array import array
 from random_numbers import random_integer
 from random import choices
+
+wild_symbol = "K"
+free_spins_symbol = "L"
+
+
 symbols_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 symbols_1_3_5 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "L"]
 symbols_2_4 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
@@ -47,7 +52,7 @@ payments = {
     "K": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
     "F": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
 }
-free_spins = [15, 20, 25]
+free_spins_tuple = [0, 0, 15, 20, 25]
 
 # mover a payments:
 
@@ -80,7 +85,7 @@ def visibles(reels_r, roll, visible=[3, 3, 3, 3, 3]) -> array:
             for (index, reel_r) in enumerate(reels_r)]
 
 
-def winning_chains(visible: array, total_reels=5, wild="K") -> dict:
+def winning_chains(visible: array, total_reels=5, wild=wild_symbol) -> dict:
     chains = {}
     v0 = visible[0]
     potential = set(v0)
@@ -112,9 +117,10 @@ def winning_chains(visible: array, total_reels=5, wild="K") -> dict:
 # payment functions:
 
 
-def winnings(chains: dict = None, payments: dict = payments, symbols: array = symbols_list) -> dict:
-    payments_array = []
+def winnings(chains: dict = None, payments: dict = payments, free_spins_symbol: str = free_spins_symbol, free_spins_tuple: tuple = free_spins_tuple) -> dict:
+    line_wins = []
     keys = chains.keys()
+    total_win = 0
     for key in keys:
         chain = chains[key]
         wild = []
@@ -125,6 +131,15 @@ def winnings(chains: dict = None, payments: dict = payments, symbols: array = sy
         if len(key) > 3:
             wild.append(int(key[4]))
 
-        payments_array.append(
-            dict(symbol=key[0], chain=chain, wild=wild, win=win))
-    return payments_array
+        if win > 0:
+            total_win += win
+            line_wins.append(
+                dict(symbol=key[0], chain=chain, wild=wild, win=win))
+    free_spins = 0
+    if free_spins_symbol in keys:
+        free_spins = free_spins_tuple[chains[free_spins_symbol]]
+
+    winnings = dict(total_win=total_win,
+                    free_spins=free_spins, line_wins=line_wins)
+
+    return winnings
