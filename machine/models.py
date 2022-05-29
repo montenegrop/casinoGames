@@ -1,6 +1,6 @@
 from django.db import models
 
-from machine.computations import victorious_payment
+from machine.computations.examples import victorious_payment
 
 # Create your models here.
 
