@@ -4,7 +4,7 @@
 from array import array
 from random_numbers import random_integer
 from random import choices
-
+symbols_list = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 symbols_1_3_5 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "L"]
 symbols_2_4 = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"]
 weight_12 = 100/12
@@ -75,7 +75,7 @@ def roll(lengths_dict, total_reels=5):
     return [random_integer(0, lengths_dict[str(n)]) for n in range(1, total_reels + 1)]
 
 
-def visible(reels_r, roll, visible=[3, 3, 3, 3, 3]):
+def visibles(reels_r, roll, visible=[3, 3, 3, 3, 3]) -> array:
     return [reel_r[roll[index]: roll[index]+visible[index]]
             for (index, reel_r) in enumerate(reels_r)]
 
@@ -92,6 +92,9 @@ def winning_chains(visible: array, total_reels=5, wild="K") -> dict:
         reel = visible[reel_index]
         if not wild in reel:
             potential = potential.intersection(set(reel))
+            symbol_potential = potential
+        else:
+            symbol_potential = potential.intersection(set(reel))
 
         keys = list(chains.keys())
         for key in keys:
@@ -101,7 +104,27 @@ def winning_chains(visible: array, total_reels=5, wild="K") -> dict:
             if wild in set(reel):
                 chains[key + "w" + str(reel_index)
                        ] = chains[key] + [reel.index(wild)]
-            if symbol in potential.intersection(set(reel)):
+            if symbol in symbol_potential:
                 chains[key].append(reel.index(symbol))
         reel_index += 1
     return chains
+
+# payment functions:
+
+
+def winnings(chains: dict = None, payments: dict = payments, symbols: array = symbols_list) -> dict:
+    payments_array = []
+    keys = chains.keys()
+    for key in keys:
+        chain = chains[key]
+        wild = []
+        win = payments[key[0]][len(chain)]
+        # si hay multiplicador del len(key)
+        if len(key) > 1:
+            wild.append(int(key[2]))
+        if len(key) > 3:
+            wild.append(int(key[4]))
+
+        payments_array.append(
+            dict(symbol=key[0], chain=chain, wild=wild, win=win))
+    return payments_array
