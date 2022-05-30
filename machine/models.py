@@ -18,8 +18,14 @@ class Machine(models.Model):
     free_spins = ArrayField(models.IntegerField(blank=True),
                             size=5)
 
+    roi = models.FloatField(default=0)
+
     # corregir:
     # ver si se puede mejorar
 
     def payment(self, roll):
         return victorious_payment(self, roll)
+
+    def save(self, *args, **kwargs):
+        self.roi += 0.01
+        super(Machine, self).save(*args, **kwargs)

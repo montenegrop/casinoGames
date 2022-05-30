@@ -7,7 +7,7 @@ from machine.models import Machine
 
 
 class MachineAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields = ('roi',)
 
 
 admin.site.register(Machine, MachineAdmin)
