@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'machine',
     'rest',
 
-    #mis-pip
+    # mis-pip
     'rest_framework',
 ]
 

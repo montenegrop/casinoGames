@@ -29,10 +29,12 @@ def dummy_victorious_json(request):
 
 @api_view()
 def realistic_victorious_json(request):
+    bet = 1
     roll = []
     for num in range(0, 5):
         roll.append(random_integer(0, 8))
 
     result = payment(roll=roll, bet=1)
     data = result
+    data["bet"] = bet
     return Response(data)
