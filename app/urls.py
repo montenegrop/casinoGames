@@ -5,4 +5,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('testApi.urls', namespace='test_api')),
     path('data/', include('rest.urls', namespace='jsons_tests')),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
