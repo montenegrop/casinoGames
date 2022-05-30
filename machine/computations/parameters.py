@@ -2,7 +2,7 @@
 # 11 comodín, 12 free spins
 # comodín solo aparece en reel 2 y 4
 from array import array
-from random_numbers import random_integer
+from machine.computations.random_numbers import random_integer
 from random import choices
 
 wild_symbol = "K"
@@ -50,7 +50,7 @@ payments = {
     "I": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
     "J": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
     "K": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
-    "F": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
+    "L": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
 }
 free_spins_tuple = [0, 0, 15, 20, 25]
 
@@ -117,14 +117,15 @@ def winning_chains(visible: array, total_reels=5, wild=wild_symbol) -> dict:
 # payment functions:
 
 
-def winnings(chains: dict = None, payments: dict = payments, free_spins_symbol: str = free_spins_symbol, free_spins_tuple: tuple = free_spins_tuple) -> dict:
+def winnings(chains: dict = None, payments: dict = payments, free_spins_symbol: str = free_spins_symbol, free_spins_tuple: array = free_spins_tuple) -> dict:
     line_wins = []
     keys = chains.keys()
     total_win = 0
     for key in keys:
+        print(key, chains[key])
         chain = chains[key]
         wild = []
-        win = payments[key[0]][len(chain)]
+        win = payments[key][str(len(chain))]
         # si hay multiplicador del len(key)
         if len(key) > 1:
             wild.append(int(key[2]))
@@ -137,7 +138,7 @@ def winnings(chains: dict = None, payments: dict = payments, free_spins_symbol: 
                 dict(symbol=key[0], chain=chain, wild=wild, win=win))
     free_spins = 0
     if free_spins_symbol in keys:
-        free_spins = free_spins_tuple[chains[free_spins_symbol]]
+        free_spins = free_spins_tuple[len(chains[free_spins_symbol])-1]
 
     winnings = dict(total_win=total_win,
                     free_spins=free_spins, line_wins=line_wins)

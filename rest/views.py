@@ -4,7 +4,8 @@ from rest_framework.response import Response
 import json
 from machine.computations.random_numbers import random_integer
 from machine.computations.examples.victorious_payment import payment
-
+from machine.models import Machine
+from machine.computations.parameters import roll, winning_chains, visibles, winnings
 
 f = open("rest/dummy_data/dama_muerta_1.json", "r")
 data = json.load(f)
@@ -30,11 +31,22 @@ def dummy_victorious_json(request):
 @api_view()
 def realistic_victorious_json(request):
     bet = 1
-    roll = []
-    for num in range(0, 5):
-        roll.append(random_integer(0, 8))
 
-    result = payment(roll=roll, bet=1)
-    data = result
-    data["bet"] = bet
-    return Response(data)
+    machine = Machine.objects.first()
+    random_roll = roll(lengths_dict={
+        "1": 101,
+        "2": 102,
+        "3": 103,
+        "4": 104,
+        "5": 105
+    })
+
+    visible = visibles(machine.reels_round, random_roll, [3, 3, 3, 3, 3])
+    chains = winning_chains(visible, total_reels=5, wild="k")
+    wins = winnings(chains, payments=machine.payments,
+                    free_spins_symbol="L", free_spins_tuple=machine.free_spins)
+
+    # result = payment(roll=roll, bet=1)
+    # data = result
+    # data["bet"] = bet
+    return Response(wins)
