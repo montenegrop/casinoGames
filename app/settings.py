@@ -25,7 +25,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-print("keeeeeeeeeeeeeeeeeeeeeeeeeeeey", os.environ.get('SECRET_KEY'))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 
@@ -103,7 +102,6 @@ DATABASES = {
         'NAME': os.environ.get('SQL_DATABASE'),
         'USER': os.environ.get('SQL_USER'),
         'PASSWORD': os.environ.get('SQL_PASSWORD'),
-        'HOST': os.environ.get('SQL_HOST'),
         'PORT': os.environ.get('SQL_PORT'),
     }
 }
