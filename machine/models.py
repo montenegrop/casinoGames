@@ -8,17 +8,30 @@ from django.contrib.postgres.fields import ArrayField
 
 
 class Machine(models.Model):
+
+    def empty_list():
+        return list()
     # identificar la maquina que estamos usando
-    configuration = models.CharField(max_length=10000, default="")
-    reels_round = ArrayField(
-        models.CharField(max_length=200, blank=True),
-        size=5,
-    )
+    name = models.CharField(max_length=200, blank=True)
+
     payments = models.JSONField()
     free_spins = ArrayField(models.IntegerField(blank=True),
-                            size=5)
+                            size=5, default=empty_list)
 
     roi = models.FloatField(default=0)
+
+    normal_reel = ArrayField(
+        models.CharField(max_length=200, blank=True),
+        size=5, default=empty_list
+    )
+    bonus_reel = ArrayField(
+        models.CharField(max_length=200, blank=True),
+        size=5, default=empty_list
+    )
+    visible = ArrayField(
+        models.IntegerField(blank=True),
+        size=5, default=empty_list
+    )
 
     # corregir:
     # ver si se puede mejorar
@@ -29,3 +42,6 @@ class Machine(models.Model):
     def save(self, *args, **kwargs):
         self.roi += 0.01
         super(Machine, self).save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.name
