@@ -42,11 +42,22 @@ def realistic_victorious_json(request):
     })
 
     visible = visibles(machine.reels_round, random_roll, [3, 3, 3, 3, 3])
-    chains = winning_chains(visible, total_reels=5, wild="k")
+    chains = winning_chains(screen=visible, total_reels=5, wild="k")
     wins = winnings(chains, payments=machine.payments,
                     free_spins_symbol="L", free_spins_tuple=machine.free_spins)
 
     # result = payment(roll=roll, bet=1)
     # data = result
     # data["bet"] = bet
+    return Response(wins)
+
+
+@api_view()
+def victorious(request):
+    bet = 1
+
+    machine = Machine.objects.get(name="victorious2")
+
+    gm = {"G": 0, "M": 0}
+
     return Response(wins)

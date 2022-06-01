@@ -15,26 +15,32 @@ class Machine(models.Model):
     name = models.CharField(max_length=200, blank=True)
 
     payments = models.JSONField()
-    free_spins = ArrayField(models.IntegerField(blank=True),
-                            size=5, default=empty_list)
-
-    roi = models.FloatField(default=0)
+    free_spins = ArrayField(
+        models.IntegerField(blank=True),
+        size=5,
+        default=empty_list
+    )
 
     normal_reel = ArrayField(
         models.CharField(max_length=200, blank=True),
-        size=5, default=empty_list
+        size=5,
+        default=empty_list
     )
     bonus_reel = ArrayField(
         models.CharField(max_length=200, blank=True),
-        size=5, default=empty_list
+        size=5,
+        default=empty_list
     )
     visible = ArrayField(
         models.IntegerField(blank=True),
-        size=5, default=empty_list
+        size=5,
+        default=empty_list
     )
+    multiplier = models.IntegerField(default=3)
 
     # corregir:
     # ver si se puede mejorar
+    roi = models.FloatField(default=0)
 
     def payment(self, roll):
         return victorious_payment(self, roll)
