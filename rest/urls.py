@@ -1,6 +1,6 @@
 
 from django.urls import path
-from .views import dummy_casino_json, dummy_victorious_json, realistic_victorious_json
+from .views import dummy_casino_json, dummy_victorious_json, realistic_victorious_json, victorious2
 
 app_name = 'jsons de prueba'
 
@@ -14,5 +14,7 @@ urlpatterns = [
     path('dama_muerta/', dummy_casino_json, name='dama_muerta'),
     path('victorious_style/', dummy_victorious_json, name='victorious_style'),
     path('realistic_victorious/', realistic_victorious_json,
-         name='realistic_victorious')
+         name='realistic_victorious'),
+    path('victorious/', victorious2,
+         name='victorious')
 ]

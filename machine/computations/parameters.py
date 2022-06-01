@@ -1,7 +1,6 @@
 # 12 símbolos
 # 11 comodín, 12 free spins
 # comodín solo aparece en reel 2 y 4
-from array import array
 from machine.computations.random_numbers import random_integer
 from random import choices
 
@@ -52,7 +51,7 @@ payments = {
     "K": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
     "L": {1: 0, 2: 0, 3: 1, 4: 10, 5: 50},
 }
-free_spins_tuple = [0, 0, 15, 20, 25]
+free_spins_list = [0, 0, 15, 20, 25]
 
 # mover a payments:
 
@@ -80,21 +79,26 @@ def roll(lengths_dict, total_reels=5):
     return [random_integer(0, lengths_dict[str(n)]) for n in range(1, total_reels + 1)]
 
 
-def visibles(reels_r, roll, visible=[3, 3, 3, 3, 3]) -> array:
+def visibles(reels_r, roll, visible=[3, 3, 3, 3, 3]) -> list:
     return [reel_r[roll[index]: roll[index]+visible[index]]
             for (index, reel_r) in enumerate(reels_r)]
 
 
-def winning_chains(visible: array, total_reels=5, wild=wild_symbol) -> dict:
+def winning_chains(
+    screen: list,
+    total_reels=5,
+    wild=wild_symbol
+) -> dict:
+
     chains = {}
-    v0 = visible[0]
+    v0 = screen[0]
     potential = set(v0)
     for symbol in potential:
         chains[symbol] = [v0.index(symbol)]
 
     reel_index = 1
     while potential and reel_index < total_reels:
-        reel = visible[reel_index]
+        reel = screen[reel_index]
         if not wild in reel:
             potential = potential.intersection(set(reel))
             symbol_potential = potential
@@ -117,19 +121,24 @@ def winning_chains(visible: array, total_reels=5, wild=wild_symbol) -> dict:
 # payment functions:
 
 
-def winnings(chains: dict = None, payments: dict = payments, free_spins_symbol: str = free_spins_symbol, free_spins_tuple: array = free_spins_tuple) -> dict:
+def winnings(
+    chains: dict,
+    payments: dict = payments,
+    free_spins_symbol: str = free_spins_symbol,
+    free_spins_list: list = free_spins_list
+) -> dict:
+
     line_wins = []
     keys = chains.keys()
     total_win = 0
     for key in keys:
-        print(key, chains[key])
         chain = chains[key]
         wild = []
-        win = payments[key][str(len(chain))]
+        win = payments[key[0]][str(len(chain))]
         # si hay multiplicador del len(key)
-        if len(key) > 1:
+        if len(key) == 3:
             wild.append(int(key[2]))
-        if len(key) > 3:
+        if len(key) == 5:
             wild.append(int(key[4]))
 
         if win > 0:
@@ -138,7 +147,7 @@ def winnings(chains: dict = None, payments: dict = payments, free_spins_symbol: 
                 dict(symbol=key[0], chain=chain, wild=wild, win=win))
     free_spins = 0
     if free_spins_symbol in keys:
-        free_spins = free_spins_tuple[len(chains[free_spins_symbol])-1]
+        free_spins = free_spins_list[len(chains[free_spins_symbol])-1]
 
     winnings = dict(total_win=total_win,
                     free_spins=free_spins, line_wins=line_wins)
