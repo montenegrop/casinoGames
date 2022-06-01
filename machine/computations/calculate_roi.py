@@ -1,18 +1,12 @@
 
 
-from examples.victorious_parameters import reel_normal
+from ..computations.examples.victorious_parameters import reel_normal
 from machine.models import Machine
-from parameters import winning_chains, winnings, visibles, roll
-
-victorious = Machine.objects.get(name="victoriousTests")
+from .parameters import winning_chains, winnings
 
 
 def reel_round(reel: str, visible: int) -> str:
     return reel + reel[0: visible - 1]
-
-
-wild = "W"
-freeSpins = "S"
 
 
 def compute_GM(
@@ -22,7 +16,11 @@ def compute_GM(
     visible=[3, 3, 3, 3, 3]
 ) -> float:
 
-    G, M = 0, 0
+    wild = "W"
+    freeSpins = "S"
+
+    # g, M, f, combinations
+    globalGM = [0, 0, 0, 0]
 
     sizes = [len(reel) for reel in reels]
     reels_round = [reel_round(reel, visible[i])
@@ -42,11 +40,14 @@ def compute_GM(
             r = reels_round[i][j: j + visible[i]]
             if len(arr) == len(sizes) - 1:
                 gm = GM(arr + [r])
-                G += gm[0]
-                M += gm[1]
-                print(G, M)
+                globalGM[0] += gm[0]
+                globalGM[1] += gm[1]
+                globalGM[2] += 1
             else:
+                if i == 1:
+                    print("array:", arr + [r], "i:",
+                          1, "j:", j, "GM:", globalGM)
                 combinations(combination=arr + [r])
 
-
-print(compute_G(reel_normal))
+    combinations()
+    return globalGM

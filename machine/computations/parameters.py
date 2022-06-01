@@ -134,7 +134,7 @@ def winnings(
     for key in keys:
         chain = chains[key]
         wild = []
-        win = payments[key][str(len(chain))]
+        win = payments[key[0]][str(len(chain))]
         # si hay multiplicador del len(key)
         if len(key) == 3:
             wild.append(int(key[2]))

@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 import json
+from machine.computations.calculate_roi import compute_GM
 from machine.computations.random_numbers import random_integer
 from machine.computations.examples.victorious_payment import payment
 from machine.models import Machine
@@ -53,11 +54,18 @@ def realistic_victorious_json(request):
 
 
 @api_view()
-def victorious(request):
+def victorious2(request):
     bet = 1
 
-    machine = Machine.objects.get(name="victorious2")
+    machine = Machine.objects.get(name="victoriousTests")
+    reels = machine.normal_reel
+    payments = machine.payments
+    visible = machine.visible
+    free_spins_list = machine.free_spins
 
-    gm = {"G": 0, "M": 0}
+    gmlist = compute_GM(reels=reels, payments=payments, visible=visible,
+                        free_spins_list=free_spins_list)
 
-    return Response(wins)
+    gm = {"G": gmlist[0], "M": gmlist[1], "counter": gmlist[2]}
+
+    return Response(gm)
