@@ -144,12 +144,21 @@ def winnings(
         if win > 0:
             total_win += win
             line_wins.append(
-                dict(symbol=key[0], chain=chain, wild=wild, win=win))
+                dict(
+                    symbol=key[0],
+                    chain=chain,
+                    wild=wild,
+                    win=win
+                )
+            )
     free_spins = 0
     if free_spins_symbol in keys:
         free_spins = free_spins_list[len(chains[free_spins_symbol])-1]
 
-    winnings = dict(total_win=total_win,
-                    free_spins=free_spins, line_wins=line_wins)
+    winnings = dict(
+        total_win=total_win,
+        free_spins=free_spins,
+        line_wins=line_wins
+    )
 
     return winnings

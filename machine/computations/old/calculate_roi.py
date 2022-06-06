@@ -1,7 +1,5 @@
 
 
-from ..computations.examples.victorious_parameters import reel_normal
-from machine.models import Machine
 from .parameters import winning_chains, winnings
 
 
