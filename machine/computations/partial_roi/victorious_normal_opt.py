@@ -2,8 +2,8 @@ from time_decorator import timeit
 import sys
 
 increment = 5
-initial = int(sys.argv[1])
-
+# initial = int(sys.argv[1])
+initial = 0
 
 wild = "W"
 total_reels = 5
@@ -134,6 +134,9 @@ reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBH
          'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
          'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
          'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
+
+for rr in reels:
+    print(len(rr))
 
 
 def reel_round(reel: str = "", visible: int = 3) -> str:
@@ -294,10 +297,12 @@ reels_round_list_0 = [
     ('ECF', 1),
     ('FBD', 1)
 ]
-reels_round_set_0 = set(reels_round_list_0[initial: initial + increment])
+reels_round_set_0 = set(reels_round_list_0[initial: initial + 160])
 reels_round_set_1234 = [to_set(reel) for reel in reels_round[1:5]]
 reels_round_set = [reels_round_set_0] + reels_round_set_1234
 
-compute_combinations_GM(reels_round_set=reels_round_set)
+[print(len(reel)) for reel in reels_round_set]
+
+# compute_combinations_GM(reels_round_set=reels_round_set)
 
 print("termino:", reels_round_list_0[initial: initial + increment])
