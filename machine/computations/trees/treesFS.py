@@ -14,7 +14,7 @@ payments = {
     'H': {"0": 0, '1': 0, '2': 0, '3': 30, '4': 200, '5': 500},
     'I': {"0": 0, '1': 0, '2': 0, '3': 50, '4': 400, '5': 1000},
     'J': {"0": 0, '1': 0, '2': 0, '3': 100, '4': 500, '5': 1500},
-    'S': {"0": 0, '1': 0, '2': 0, '3': 5, '4': 20, '5': 50},
+    'S': {"0": 0, '1': 0, '2': 0, '3': 125, '4': 500, '5': 1250},
     'W': {"0": 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
 }
 
@@ -67,6 +67,7 @@ def compute_combinations_GM(reels_round_set: list):
                         reps = r[0][0].count(key[0])
                         r_chains[key][1] *= reps
 
+            there_is_S = True
             for key in keys:
                 key_win = 0
                 key_spins = 0
@@ -78,30 +79,34 @@ def compute_combinations_GM(reels_round_set: list):
                             r_chains[key][1]
                         rg += key_win
                         if key[0] == "S":
+                            there_is_S = False
                             key_spins = free_spins_list[index] * \
                                 r_factor * \
                                 lengths_mult[total_reels -
                                              index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
-                    Scount = 0
-                    s_keys = keys.copy()
-                    for s_key in s_keys:
-                        if s_key[0] == "S":
-                            Scount += 1
-                    exSpin = expectations[str(
-                        free_spins_list[index]*Scount)]
-                    exSpin[0] += key_win
-                    exSpin[1] += key_spins
-                    exSpin[2] += r_factor * \
-                        lengths_mult[total_reels-index-1]
+                        s_keys = keys.copy()
+                        Scount = 0
+                        for s_key in s_keys:
+                            if s_key[0] == "S":
+                                Scount += 1
+                        if Scount:
+                            exSpin = expectations[str(
+                                free_spins_list[index]*Scount)]
+                            exSpin[0] += key_win
+                            exSpin[1] += key_spins
                     r_chains.pop(key)
+            if not there_is_S:
+                exSpin[2] += r_factor * \
+                    lengths_mult[total_reels-index-1]
             if r_chains:
                 if index < total_reels - 1:
                     combinations_GM(
                         index=index+1, factor=r_factor, chains=r_chains)
                 else:
                     for key in r_chains:
+                        print(key, r_chains[key])
                         key_win = 0
                         key_spins = 0
                         key_win = payments[key[0]][str(index + 1)] * \
@@ -116,15 +121,17 @@ def compute_combinations_GM(reels_round_set: list):
                                              index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
-                        Scount = 0
                         s_keys = keys.copy()
+                        Scount = 0
                         for s_key in s_keys:
                             if s_key[0] == "S":
                                 Scount += 1
-                        exSpin = expectations[str(
-                            free_spins_list[index]*Scount)]
-                        exSpin[0] += key_win
-                        exSpin[1] += key_spins
+                        if Scount:
+                            exSpin = expectations[str(
+                                free_spins_list[index + 1]*Scount)]
+                            exSpin[0] += key_win
+                            exSpin[1] += key_spins
+                    if there_is_S:
                         exSpin[2] += r_factor * \
                             lengths_mult[total_reels-index-1]
                     gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
@@ -132,18 +139,16 @@ def compute_combinations_GM(reels_round_set: list):
                 gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
             gmTotal[0] += rg
             gmTotal[1] += rm
-            if index == 0:
-                print("ex0:", expectations)
     combinations_GM()
     return gmTotal
 
 
-reels_free_spins = ['ABCEFGESCBDEHCIEBIACEFGCEBDESHCEIAJEICGBDCEDICFBEDCASDJSCBDHEDACBGJDSEBCDECDEBDAGDCGBHEDFBGCIDAGBDESBDSJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
-                    'JEBFDGJASCHGAEDHBAFDIHFAIECGDFAGBHASJEFAHDISAFBGAHIECWDFAWJDHSEBAJWIFGWHCEDWAGWFJSBDAFGEIWDCFHADSEAFGIWDAJWCBAJEDHSEAFGDAIJAIWDBHJDAGFEAHDWEHADSIAEFDGAFDBAJFEADISADHAGDAJE',
-                    'DABEACFDGCEASBDFGAFDEAFSAFBDSEDBCFADEFDGCHADECBDAFBDFAECDBFCEDBHADCBIACHDFECDSFEADSGABSDCHEBCDAFSECGSEFDEFAHDJCAHBEDFHECDAJHBFEADCSHBJDEADBAFEDBSFEJHAIESCEAIFBHEACDA',
-                    'BADFCGHBIEDJHWBHEFBICJADBGFICHBFGAFCDBICJFBHFWJCFEAWIFHCGBWDHJCAIFJHCWDBJCIWFHBGDCBAECGHCFSAFDCIBJHCBGIJDBFDAEFBACGJFBCJAGDFBIAFBCEBHDFAHBA',
-                    'ABFGJCSAHFIJBDACFEBSJHBJGCIJBSFJDFBHDSIABJIGDFIJAECJBIDASFDHGFABJICSHICFGEHDAJHDSJIABJCFGBSHAJIDACDHFAJIFHCJEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
-lengths = [168, 171, 165, 139, 165]
+reels = ['ABCEFGESCBDEHCIEBIACEFGCEBDESHCEIAJEICGBDCEDICFBEDCASDJSCBDHEDACBGJDSEBCDECDEBDAGDCGBHEDFBGCIDAGBDESBDSJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
+         'JEBFDGJASCHGAEDHBAFDIHFAIECGDFAGBHASJEFAHDISAFBGAHIECWDFAWJDHSEBAJWIFGWHCEDWAGWFJSBDAFGEIWDCFHADSEAFGIWDAJWCBAJEDHSEAFGDAIJAIWDBHJDAGFEAHDWEHADSIAEFDGAFDBAJFEADISADHAGDAJE',
+         'DABEACFDGCEASBDFGAFDEAFSAFBDSEDBCFADEFDGCHADECBDAFBDFAECDBFCEDBHADCBIACHDFECDSFEADSGABSDCHEBCDAFSECGSEFDEFAHDJCAHBEDFHECDAJHBFEADCSHBJDEADBAFEDBSFEJHAIESCEAIFBHEACDA',
+         'BADFCGHBIEDJHWBHEFBICJADBGFICHBFGAFCDBICJFBHFWJCFEAWIFHCGBWDHJCAIFJHCWDBJCIWFHBGDCBAECGHCFSAFDCIBJHCBGIJDBFDAEFBACGJFBCJAGDFBIAFBCEBHDFAHBA',
+         'ABFGJCSAHFIJBDACFEBSJHBJGCIJBSFJDFBHDSIABJIGDFIJAECJBIDASFDHGFABJICSHICFGEHDAJHDSJIABJCFGBSHAJIDACDHFAJIFHCJEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
+lengths = [len(r) for r in reels]
 lengths_mult = [
     1,
     lengths[4],
@@ -194,7 +199,7 @@ def to_set(reel_round):
 visible = [3, 3, 3, 3, 3]
 
 reels_round_set = [to_set(reel_round(reel, visible[i]))
-                   for (i, reel) in enumerate(reels_free_spins)]
+                   for (i, reel) in enumerate(reels)]
 
 
 print("start")
