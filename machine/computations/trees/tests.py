@@ -39,7 +39,7 @@ expectations = {
 }
 
 
-def compute_combinations_GM(reels_round_set: list):
+def compute_combinations_GM(reels_round_set: list, lengths_mult_array):
 
     # g, M, count
     gmTotal = [0, 0, 0]
@@ -75,14 +75,13 @@ def compute_combinations_GM(reels_round_set: list):
                     if not "W" in r[0][0]:
                         key_win = payments[key[0]][str(index)] * \
                             r_factor * \
-                            lengths_mult[total_reels-index-1] * \
+                            lengths_mult_array[total_reels-index-1] * \
                             r_chains[key][1]
                         rg += key_win
                         if key[0] == "S":
-                            S_eliminated = True
                             key_spins = free_spins_list[index] * \
                                 r_factor * \
-                                lengths_mult[total_reels -
+                                lengths_mult_array[total_reels -
                                              index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
@@ -97,42 +96,35 @@ def compute_combinations_GM(reels_round_set: list):
                         key_spins = 0
                         key_win = payments[key[0]][str(index + 1)] * \
                             r_factor * \
-                            lengths_mult[total_reels-index-1] * \
+                            lengths_mult_array[total_reels-index-1] * \
                             r_chains[key][1]
                         rg += key_win
                         if key[0] == "S":
                             key_spins = free_spins_list[index + 1] * \
                                 r_factor * \
-                                lengths_mult[total_reels -
+                                lengths_mult_array[total_reels -
                                              index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
-                    gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
+                    gmTotal[2] += r_factor * lengths_mult_array[total_reels-index-1]
             else:
-                gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
+                gmTotal[2] += r_factor * lengths_mult_array[total_reels-index-1]
             gmTotal[0] += rg
             gmTotal[1] += rm
     combinations_GM()
     return gmTotal
 
 
-reels = ["ASB", "CSB", "AED", "SAW", "ABE"]
-# reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
-#          'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJE',
-#          'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
-#          'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
-#          'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
+# reels = ["ASB", "CSB", "SEB", "ABW", "ABE"]
+reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
+         'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJE',
+         'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
+         'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
+         'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
 # reels normal len 168 171 175 171 165
 
 lengths = [len(r) for r in reels]
-lengths_mult = [
-    1,
-    lengths[4],
-    lengths[4] * lengths[3],
-    lengths[4] * lengths[3] * lengths[2],
-    lengths[4] * lengths[3] * lengths[2] * lengths[1],
-    lengths[4] * lengths[3] * lengths[2] * lengths[1] * lengths[0]
-]
+
 # sets_lengths normal spins: 0 69 78 55 68 84
 
 
@@ -217,6 +209,21 @@ FSReelsDict = {
     "50": [],
     "75": [],
     "100": [],
+}
+
+FSGMPDict = {
+    "0": [0,0,0],
+    "15": [0,0,0],
+    "30": [0,0,0],
+    "45": [0,0,0],
+    "20": [0,0,0],
+    "40": [0,0,0],
+    "60": [0,0,0],
+    "80": [0,0,0],
+    "25": [0,0,0],
+    "50": [0,0,0],
+    "75": [0,0,0],
+    "100": [0,0,0],
 }
 
 
@@ -325,42 +332,66 @@ for i in range(0, 5):
     for n in range(0, 4):
         FSDict_structure[str(i)+","+str(n)
                          ] = reel_with_nSW(reels_round_set, i, n)
-        suma += len(FSDict_structure[str(i)+","+str(n)
-                                     ])
-    # print(str(i), suma)
 
 
 for l in [0, 3, 4, 5]:
     for mult in [1, 2, 4]:
         reels_round_set_SN(dictionaryFS=FSDict_structure, fs=l, mult=mult)
 
+FSReelsDict
+
 # for key in reels_roud_set_FSDict:
 
+def lengh_mult(reel_set, i):
+    cols = 1
+    for col in reel_set[total_reels-i:total_reels]:
+        w = 0
+        for word in col:
+            w += word[1]
+        cols *= w
+    return cols
 
-# print("start")
-# gm_Total = compute_combinations_GM(reels_round_set=reels_round_set)
-# tot_file = open("gmpTests.json", "a")
-# tot_file.write(str(gm_Total))
-# tot_file.close()
-# print("end")
+print("start")
+gm_Total = [0,0,0]
+for key in FSReelsDict:
+    key_total = [0,0,0]
+    for reel_set_key in FSReelsDict[key]:
+        lengths_mult_array = [lengh_mult(reel_set_key, i) for i in range(0,total_reels + 1)]   
+        print(lengths_mult_array)  
+        result = compute_combinations_GM(reels_round_set=reel_set_key, lengths_mult_array=lengths_mult_array)
+        for i in range(0,3):
+            key_total[i] += result[i]
+            gm_Total[i] += result[i]
+    print("ketotal:", print("gmto", gm_Total))
+    FSGMPDict[key] = key_total
+    key_file = open(key +".json", "a")
+    key_file.write(str(key_total))
+    key_file.close()
+tot_file = open("total.json", "a")
+tot_file.write(str(gm_Total))
+tot_file.close()
+all_keys_file = open("allKeysGMP.json", "a")
+all_keys_file.write(str(FSGMPDict))
+all_keys_file.close()
+print("gmtotal", gm_Total)
+print("end")
 
 
 # print("g,m,p:", gm_Total)
 
 
-print("start")
-total = 0
-for key in FSReelsDict:
-    tkey = 0
-    for reel in FSReelsDict[key]:
-        cols = 1
-        for col in reel:
-            w = 0
-            for word in col:
-                w += word[1]
-            cols *= w
-        tkey += cols
-    total += tkey
-print("totalCout", total)
-
-print("finish")
+# print("start")
+# total = 0
+# for key in FSReelsDict:
+#     tkey = 0
+#     for reel in FSReelsDict[key]:
+#         cols = 1
+#         for col in reel:
+#             w = 0
+#             for word in col:
+#                 w += word[1]
+#             cols *= w
+#         tkey += cols
+#     total += tkey
+# print("totalCout", total)
+# print("finish")
