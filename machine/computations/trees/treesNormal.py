@@ -14,26 +14,46 @@ payments = {
     'H': {"0": 0, '1': 0, '2': 0, '3': 30, '4': 200, '5': 500},
     'I': {"0": 0, '1': 0, '2': 0, '3': 50, '4': 400, '5': 1000},
     'J': {"0": 0, '1': 0, '2': 0, '3': 100, '4': 500, '5': 1500},
-    'S': {"0": 0, '1': 0, '2': 0, '3': 5, '4': 20, '5': 50},
+    'S': {"0": 0, '1': 0, '2': 0, '3': 125, '4': 500, '5': 1250},
     'W': {"0": 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
 }
+
+
 free_spins_list = [0, 0, 0, 15, 20, 25]
 free_spins_symbol = "S"
+
+# g, m, c
+# se espera m = c x key
+expectations = {
+    "0": [0, 0, 0],
+    "15": [0, 0, 0],
+    "20": [0, 0, 0],
+    "25": [0, 0, 0],
+    "30": [0, 0, 0],
+    "35": [0, 0, 0],
+    "40": [0, 0, 0],
+    "50": [0, 0, 0],
+    "80": [0, 0, 0],
+    "100": [0, 0, 0],
+}
 
 
 def compute_combinations_GM(reels_round_set: list):
 
     # g, M, count
     gmTotal = [0, 0, 0]
+    initial_chains = {"A": [0, 1], "B": [0, 1], "C": [0, 1], "D": [0, 1], "E": [0, 1], "F": [
+        0, 1], "G": [0, 1], "H": [0, 1], "I": [0, 1], "J": [0, 1], "S": [0, 1], "W": [0, 1]}
 
     @timeit("")
-    def combinations_GM(index=0, factor=1, chains={"A": [0, 1], "B": [0, 1], "C": [0, 1], "D": [0, 1], "E": [0, 1], "F": [0, 1], "G": [0, 1], "H": [0, 1], "I": [0, 1], "J": [0, 1], "S": [0, 1], "W": [0, 1]}):
+    def combinations_GM(index=0, factor=1, chains=initial_chains):
         for r in reels_round_set[index]:
 
             r_factor = factor * r[1]
             r_chains = copy.deepcopy(chains)
             rg = 0
             rm = 0
+
             keys = list(r_chains.keys())
             if "W" in r[0][0]:
                 for key in keys:
@@ -47,27 +67,48 @@ def compute_combinations_GM(reels_round_set: list):
                         reps = r[0][0].count(key[0])
                         r_chains[key][1] *= reps
 
+            there_is_S = True
             for key in keys:
+                key_win = 0
+                key_spins = 0
                 if r_chains[key][0] == index:
-                    key_win = payments[key[0]][str(index)] * \
-                        r_factor * \
-                        lengths_mult[total_reels-index-1] * \
-                        r_chains[key][1]
-                    rg += key_win
-                    if key[0] == "S":
-                        key_spins = free_spins_list[index] * \
+                    if not "W" in r[0][0]:
+                        key_win = payments[key[0]][str(index)] * \
                             r_factor * \
-                            lengths_mult[total_reels -
-                                         index-1] * \
+                            lengths_mult[total_reels-index-1] * \
                             r_chains[key][1]
-                        rm += key_spins
+                        rg += key_win
+                        if key[0] == "S":
+                            there_is_S = False
+                            key_spins = free_spins_list[index] * \
+                                r_factor * \
+                                lengths_mult[total_reels -
+                                             index-1] * \
+                                r_chains[key][1]
+                            rm += key_spins
+                        s_keys = keys.copy()
+                        Scount = 0
+                        for s_key in s_keys:
+                            if s_key[0] == "S":
+                                Scount += 1
+                        if Scount:
+                            exSpin = expectations[str(
+                                free_spins_list[index]*Scount)]
+                            exSpin[0] += key_win
+                            exSpin[1] += key_spins
                     r_chains.pop(key)
+            if not there_is_S:
+                exSpin[2] += r_factor * \
+                    lengths_mult[total_reels-index-1]
             if r_chains:
                 if index < total_reels - 1:
                     combinations_GM(
                         index=index+1, factor=r_factor, chains=r_chains)
                 else:
                     for key in r_chains:
+                        print(key, r_chains[key])
+                        key_win = 0
+                        key_spins = 0
                         key_win = payments[key[0]][str(index + 1)] * \
                             r_factor * \
                             lengths_mult[total_reels-index-1] * \
@@ -80,6 +121,19 @@ def compute_combinations_GM(reels_round_set: list):
                                              index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
+                        s_keys = keys.copy()
+                        Scount = 0
+                        for s_key in s_keys:
+                            if s_key[0] == "S":
+                                Scount += 1
+                        if Scount:
+                            exSpin = expectations[str(
+                                free_spins_list[index + 1]*Scount)]
+                            exSpin[0] += key_win
+                            exSpin[1] += key_spins
+                    if there_is_S:
+                        exSpin[2] += r_factor * \
+                            lengths_mult[total_reels-index-1]
                     gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
             else:
                 gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
@@ -89,12 +143,12 @@ def compute_combinations_GM(reels_round_set: list):
     return gmTotal
 
 
-normal_reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
-                'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJE',
-                'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
-                'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
-                'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
-lengths = [168, 171, 175, 171, 165]
+reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
+         'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJE',
+         'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
+         'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
+         'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
+lengths = [len(r) for r in reels]
 lengths_mult = [
     1,
     lengths[4],
@@ -145,12 +199,19 @@ def to_set(reel_round):
 visible = [3, 3, 3, 3, 3]
 
 reels_round_set = [to_set(reel_round(reel, visible[i]))
-                   for (i, reel) in enumerate(normal_reels)]
+                   for (i, reel) in enumerate(reels)]
 
 
-# print("start")
-# gm_Total = compute_combinations_GM(reels_round_set=reels_round_set)
-# tot_file = open("final_4.json", "a")
-# tot_file.write(str(gm_Total))
-# tot_file.close()
-# print("end")
+print("start")
+gm_Total = compute_combinations_GM(reels_round_set=reels_round_set)
+tot_file = open("gmpNormal.json", "a")
+tot_file.write(str(gm_Total))
+tot_file.close()
+print("end")
+# e1 = (g/p)/(1-m/p)
+# e = g/p + 3*e1*m/p
+
+tot_file = open("expectationsNormal.json", "a")
+tot_file.write(str(expectations))
+tot_file.close()
+# e = (g/p)/(1-3*m/p)

@@ -1,4 +1,5 @@
 import copy
+from random import randint
 from time_decorator import timeit
 
 wild = "W"
@@ -21,38 +22,54 @@ free_spins_list = [0, 0, 0, 15, 20, 25]
 free_spins_symbol = "S"
 
 
-def compute_combinations_GM(reels_round_set: list):
+normal_reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
+                'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJE',
+                'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
+                'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
+                'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
+
+round_normal_reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIABFC',
+                      'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJEGD',
+                      'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASCSC',
+                      'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWDWD',
+                      'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJABHF']
+
+roll = [randint(0, len(reel) - 1) for reel in normal_reels]
+
+
+def computeRollG(roll=[0, 0, 0, 0, 0], bet=25):
+
+    def computeScreen(roll):
+        return [round_normal_reels[i:i+3] for i in roll]
+
+    screen = computeScreen(roll)
 
     # g, M, count
     gmTotal = [0, 0, 0]
 
     @timeit("")
-    def combinations_GM(index=0, factor=1, chains={"A": [0, 1], "B": [0, 1], "C": [0, 1], "D": [0, 1], "E": [0, 1], "F": [0, 1], "G": [0, 1], "H": [0, 1], "I": [0, 1], "J": [0, 1], "S": [0, 1], "W": [0, 1]}):
-        for r in reels_round_set[index]:
+    def combinations_GM(index=0, chains={"A": [0, 1], "B": [0, 1], "C": [0, 1], "D": [0, 1], "E": [0, 1], "F": [0, 1], "G": [0, 1], "H": [0, 1], "I": [0, 1], "J": [0, 1], "S": [0, 1], "W": [0, 1]}):
+        for r in screen[index]:
 
-            r_factor = factor * r[1]
             r_chains = copy.deepcopy(chains)
             rg = 0
             rm = 0
+            for key in r_chains:
+                if key[0] in r:
+                    r_chains[key][0] = index + 1
+                    if r.count(key[0]) == 2:
+                        r_chains[key][1] *= 2
+
             keys = list(r_chains.keys())
             if "W" in r[0][0]:
                 for key in keys:
                     r_chains[key + "w" +
-                             str(index)] = [index + 1, r[0][0].count("W") * r_chains[key][1]]
-
-            for key in keys:
-                if key[0] in r[0][0]:
-                    r_chains[key][0] += 1
-                    if key[0] == r[0][1]:
-                        reps = r[0][0].count(key[0])
-                        r_chains[key][1] *= reps
+                             str(index)] = [index + 1, r.count("W")]
 
             for key in keys:
                 if r_chains[key][0] == index:
-                    key_win = payments[key[0]][str(index)] * \
-                        r_factor * \
-                        lengths_mult[total_reels-index-1] * \
-                        r_chains[key][1]
+                    key_win = payments[key[0]][str(
+                        index)] * lengths_mult[total_reels-index-1] * r_chains[key][1]
                     rg += key_win
                     if key[0] == "S":
                         key_spins = free_spins_list[index] * \
@@ -74,7 +91,7 @@ def compute_combinations_GM(reels_round_set: list):
                             r_chains[key][1]
                         rg += key_win
                         if key[0] == "S":
-                            key_spins = free_spins_list[index + 1] * \
+                            key_spins = free_spins_list[index] * \
                                 r_factor * \
                                 lengths_mult[total_reels -
                                              index-1] * \
@@ -135,8 +152,6 @@ def to_set(reel_round):
             word = word + sym
         if len(word) < 3:
             word = word + col[0][1]
-        if len(word) < 3:
-            word = word + col[0][1]
         col[0][0] = word
 
     return s
@@ -147,10 +162,12 @@ visible = [3, 3, 3, 3, 3]
 reels_round_set = [to_set(reel_round(reel, visible[i]))
                    for (i, reel) in enumerate(normal_reels)]
 
+print(reels_round_set[0][0:10])
 
-# print("start")
-# gm_Total = compute_combinations_GM(reels_round_set=reels_round_set)
-# tot_file = open("final_4.json", "a")
-# tot_file.write(str(gm_Total))
-# tot_file.close()
-# print("end")
+
+print("start")
+gm_Total = compute_combinations_GM(reels_round_set=reels_round_set)
+tot_file = open("final_2.json", "a")
+tot_file.write(str(gm_Total))
+tot_file.close()
+print("end")

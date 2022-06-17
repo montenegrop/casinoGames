@@ -132,3 +132,5 @@ dmypy.json
 .casinoVenv/
 venv/
 .venv/
+
+**/node_modules

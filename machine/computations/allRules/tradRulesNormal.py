@@ -1,4 +1,5 @@
 import copy
+# from rrs_FSDict import FSDict
 from time_decorator import timeit
 
 wild = "W"
@@ -14,26 +15,48 @@ payments = {
     'H': {"0": 0, '1': 0, '2': 0, '3': 30, '4': 200, '5': 500},
     'I': {"0": 0, '1': 0, '2': 0, '3': 50, '4': 400, '5': 1000},
     'J': {"0": 0, '1': 0, '2': 0, '3': 100, '4': 500, '5': 1500},
-    'S': {"0": 0, '1': 0, '2': 0, '3': 5, '4': 20, '5': 50},
+    'S': {"0": 0, '1': 0, '2': 0, '3': 125, '4': 500, '5': 1250},
     'W': {"0": 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
 }
+
+
 free_spins_list = [0, 0, 0, 15, 20, 25]
 free_spins_symbol = "S"
 
+# g, m, c
+# se espera m = c x key
+expectations = {
+    "0": [0, 0, 0],
+    "15": [0, 0, 0],
+    "20": [0, 0, 0],
+    "25": [0, 0, 0],
+    "30": [0, 0, 0],
+    "35": [0, 0, 0],
+    "40": [0, 0, 0],
+    "50": [0, 0, 0],
+    "80": [0, 0, 0],
+    "100": [0, 0, 0],
+}
 
-def compute_combinations_GM(reels_round_set: list):
+
+def compute_combinations_GM(reels_round_set: list, lengths_mult_array):
+    count0 = [0]
+    print("len0:", len(reels_round_set[0]))
 
     # g, M, count
     gmTotal = [0, 0, 0]
+    initial_chains = {"A": [0, 1], "B": [0, 1], "C": [0, 1], "D": [0, 1], "E": [0, 1], "F": [
+        0, 1], "G": [0, 1], "H": [0, 1], "I": [0, 1], "J": [0, 1], "S": [0, 1], "W": [0, 1]}
 
     @timeit("")
-    def combinations_GM(index=0, factor=1, chains={"A": [0, 1], "B": [0, 1], "C": [0, 1], "D": [0, 1], "E": [0, 1], "F": [0, 1], "G": [0, 1], "H": [0, 1], "I": [0, 1], "J": [0, 1], "S": [0, 1], "W": [0, 1]}):
+    def combinations_GM(index=0, factor=1, chains=initial_chains):
         for r in reels_round_set[index]:
 
             r_factor = factor * r[1]
             r_chains = copy.deepcopy(chains)
             rg = 0
             rm = 0
+
             keys = list(r_chains.keys())
             if "W" in r[0][0]:
                 for key in keys:
@@ -48,19 +71,22 @@ def compute_combinations_GM(reels_round_set: list):
                         r_chains[key][1] *= reps
 
             for key in keys:
+                key_win = 0
+                key_spins = 0
                 if r_chains[key][0] == index:
-                    key_win = payments[key[0]][str(index)] * \
-                        r_factor * \
-                        lengths_mult[total_reels-index-1] * \
-                        r_chains[key][1]
-                    rg += key_win
-                    if key[0] == "S":
-                        key_spins = free_spins_list[index] * \
+                    if not "W" in r[0][0]:
+                        key_win = payments[key[0]][str(index)] * \
                             r_factor * \
-                            lengths_mult[total_reels -
-                                         index-1] * \
+                            lengths_mult_array[total_reels-index-1] * \
                             r_chains[key][1]
-                        rm += key_spins
+                        rg += key_win
+                        if key[0] == "S":
+                            key_spins = free_spins_list[index] * \
+                                r_factor * \
+                                lengths_mult_array[total_reels -
+                                                   index-1] * \
+                                r_chains[key][1]
+                            rm += key_spins
                     r_chains.pop(key)
             if r_chains:
                 if index < total_reels - 1:
@@ -68,33 +94,44 @@ def compute_combinations_GM(reels_round_set: list):
                         index=index+1, factor=r_factor, chains=r_chains)
                 else:
                     for key in r_chains:
+                        key_win = 0
+                        key_spins = 0
                         key_win = payments[key[0]][str(index + 1)] * \
                             r_factor * \
-                            lengths_mult[total_reels-index-1] * \
+                            lengths_mult_array[total_reels-index-1] * \
                             r_chains[key][1]
                         rg += key_win
                         if key[0] == "S":
                             key_spins = free_spins_list[index + 1] * \
                                 r_factor * \
-                                lengths_mult[total_reels -
-                                             index-1] * \
+                                lengths_mult_array[total_reels -
+                                                   index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
-                    gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
+                    gmTotal[2] += r_factor * \
+                        lengths_mult_array[total_reels-index-1]
             else:
-                gmTotal[2] += r_factor * lengths_mult[total_reels-index-1]
+                gmTotal[2] += r_factor * \
+                    lengths_mult_array[total_reels-index-1]
             gmTotal[0] += rg
             gmTotal[1] += rm
+            if index == 0:
+                count0[0] += 1
+                print("count0:", count0[0])
     combinations_GM()
     return gmTotal
 
 
-normal_reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
-                'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJE',
-                'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
-                'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
-                'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
-lengths = [168, 171, 175, 171, 165]
+# reels normal len 168 171 175 171 165
+reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBHCBIDFCJECFEBDGCBEDBGECIBCSDCBEAFCJCIDFBDEBCEDGBSEDCIJEBDICFDGBCEASDBCGCEBFDEGCEDBEFGBDCSECGBSCDIAB',
+         'GDSADGFAHFCBHAIFHDEIAHEIAJDWBHADFHAEHBWABSADWEJBACDSFGDFGDFESFDGCDEWGECFBGFASFCBHCDESADIAHEAIFDSHDEJBSADHFIDASDAWEJAEJDAHFWDGFAIAGEFSDGFDSFGDADSIAEFDGAFDBAJFEADISADHAGDAJE',
+         'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
+         'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
+         'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
+# sets_lengths normal spins: 0 69 78 55 68 84
+
+lengths = [len(r) for r in reels]
+
 lengths_mult = [
     1,
     lengths[4],
@@ -103,8 +140,6 @@ lengths_mult = [
     lengths[4] * lengths[3] * lengths[2] * lengths[1],
     lengths[4] * lengths[3] * lengths[2] * lengths[1] * lengths[0]
 ]
-
-# sets_lengths normal spins: 69 78 54 67 84
 
 
 def reel_round(reel: str = "", visible: int = 3) -> str:
@@ -145,12 +180,15 @@ def to_set(reel_round):
 visible = [3, 3, 3, 3, 3]
 
 reels_round_set = [to_set(reel_round(reel, visible[i]))
-                   for (i, reel) in enumerate(normal_reels)]
+                   for (i, reel) in enumerate(reels)]
 
 
-# print("start")
-# gm_Total = compute_combinations_GM(reels_round_set=reels_round_set)
-# tot_file = open("final_4.json", "a")
-# tot_file.write(str(gm_Total))
-# tot_file.close()
-# print("end")
+print("start")
+gm_Total = [0, 0, 0]
+gm_Total = compute_combinations_GM(
+    reels_round_set=reels_round_set, lengths_mult_array=lengths_mult)
+print("gmtotal", gm_Total)
+tot_file = open("normal_nr.json", "a")
+tot_file.write(str(gm_Total))
+tot_file.close()
+print("end")

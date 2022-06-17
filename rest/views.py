@@ -2,11 +2,11 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 import json
-from machine.computations.calculate_roi import compute_GM
+from machine.computations.old.calculate_roi import compute_GM
 from machine.computations.random_numbers import random_integer
 from machine.computations.examples.victorious_payment import payment
 from machine.models import Machine
-from machine.computations.parameters import roll, winning_chains, visibles, winnings
+from machine.computations.old.parameters import roll, winning_chains, visibles, winnings
 
 f = open("rest/dummy_data/dama_muerta_1.json", "r")
 data = json.load(f)
