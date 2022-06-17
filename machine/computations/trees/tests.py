@@ -18,6 +18,20 @@ payments = {
     'S': {"0": 0, '1': 0, '2': 0, '3': 125, '4': 500, '5': 1250},
     'W': {"0": 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
 }
+payments = {
+    'A': {"0": 0, '1': 0, '2': 3, '3': 6, '4': 1, '5': 1},
+    'B': {"0": 0, '1': 0, '2': 3, '3': 6, '4': 1, '5': 1},
+    'C': {"0": 0, '1': 0, '2': 0, '3': 6, '4': 1, '5': 1},
+    'D': {"0": 0, '1': 0, '2': 0, '3': 6, '4': 1, '5': 1},
+    'E': {"0": 0, '1': 0, '2': 0, '3': 12, '4': 1, '5': 1},
+    'F': {"0": 0, '1': 0, '2': 0, '3': 12, '4': 1, '5': 1},
+    'G': {"0": 0, '1': 0, '2': 0, '3': 20, '4': 1, '5': 1},
+    'H': {"0": 0, '1': 0, '2': 0, '3': 30, '4': 1, '5': 1},
+    'I': {"0": 0, '1': 0, '2': 0, '3': 50, '4': 1, '5': 1},
+    'J': {"0": 0, '1': 0, '2': 0, '3': 100, '4': 1, '5': 1},
+    'S': {"0": 0, '1': 0, '2': 0, '3': 125, '4': 1, '5': 1},
+    'W': {"0": 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
+}
 
 
 free_spins_list = [0, 0, 0, 15, 20, 25]
@@ -82,7 +96,7 @@ def compute_combinations_GM(reels_round_set: list, lengths_mult_array):
                             key_spins = free_spins_list[index] * \
                                 r_factor * \
                                 lengths_mult_array[total_reels -
-                                             index-1] * \
+                                                   index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
                     r_chains.pop(key)
@@ -103,12 +117,14 @@ def compute_combinations_GM(reels_round_set: list, lengths_mult_array):
                             key_spins = free_spins_list[index + 1] * \
                                 r_factor * \
                                 lengths_mult_array[total_reels -
-                                             index-1] * \
+                                                   index-1] * \
                                 r_chains[key][1]
                             rm += key_spins
-                    gmTotal[2] += r_factor * lengths_mult_array[total_reels-index-1]
+                    gmTotal[2] += r_factor * \
+                        lengths_mult_array[total_reels-index-1]
             else:
-                gmTotal[2] += r_factor * lengths_mult_array[total_reels-index-1]
+                gmTotal[2] += r_factor * \
+                    lengths_mult_array[total_reels-index-1]
             gmTotal[0] += rg
             gmTotal[1] += rm
     combinations_GM()
@@ -121,6 +137,7 @@ reels = ['FCDBACSAEHDAEBSDEAGCBDIAFDJCDBGCDGEBSDCFBCIDFGDBIECJEDBEFSBAEHCBESDEBH
          'SCAEGDBCFHCBADHACEDCBAGCFDHEDIBAHBFGDFSADHFBJEACFJDBGEBHEDCEDGECFAEGCAECGBAFGCFICBFCASCAEGABCFHCBADHACEDCBAJCFDHEDIBAHBFHDFSDCSADHFBJEACFJDBGEASEDIEDHECFAEGCAECHBAFGCFICBFCASC',
          'WDJECHBCGEAHFBCHECBAFCDHFCGFCWAEICBHAFGBCHAFBEHFAGEBGFDHEAJDBHFCJDBHFAIBWDJCAIBWDJCIBWDJECHBCSEAHBCGFCEBFCDHFAGFCJAEICBHAFGBCHAFBEHFBGEBIFDHEAJDBWAFJBDWFAIBWDCJAIBWDJFIBWD',
          'HFEJDHBCJDSBGFIBSCJDSAGBSAHBAJFHAIDHEJDGBJFDICHFBGFSBIFEJDHBCJDBGABIFSCJDSAGBSAIBAJDHAIDHFJDGAJFDICHEAGFSBHFEDAJFCBJFADGCSADIHJABJIGAFBIJHDSCABHGDFIJHFBJSDGBHJDHFJAB']
+reels = ["ASB", "SAB", "SEB", "ABW", "ASBE"]
 # reels normal len 168 171 175 171 165
 
 lengths = [len(r) for r in reels]
@@ -168,6 +185,7 @@ visible = [3, 3, 3, 3, 3]
 reels_round_set = [to_set(reel_round(reel, visible[i]))
                    for (i, reel) in enumerate(reels)]
 
+print(reels_round_set)
 
 FSDict_structure = {
     "0,0": [],
@@ -212,18 +230,18 @@ FSReelsDict = {
 }
 
 FSGMPDict = {
-    "0": [0,0,0],
-    "15": [0,0,0],
-    "30": [0,0,0],
-    "45": [0,0,0],
-    "20": [0,0,0],
-    "40": [0,0,0],
-    "60": [0,0,0],
-    "80": [0,0,0],
-    "25": [0,0,0],
-    "50": [0,0,0],
-    "75": [0,0,0],
-    "100": [0,0,0],
+    "0": [0, 0, 0],
+    "15": [0, 0, 0],
+    "30": [0, 0, 0],
+    "45": [0, 0, 0],
+    "20": [0, 0, 0],
+    "40": [0, 0, 0],
+    "60": [0, 0, 0],
+    "80": [0, 0, 0],
+    "25": [0, 0, 0],
+    "50": [0, 0, 0],
+    "75": [0, 0, 0],
+    "100": [0, 0, 0],
 }
 
 
@@ -235,23 +253,31 @@ def reels_round_set_SN(dictionaryFS, fs=0, mult=1):
         r1x = []
         for n in range(1, 4):
             r1x += dictionaryFS["1" + "," + str(n)]
-        reels = [[dictionaryFS["0,0"]], [r0x, dictionaryFS["1,0"]], [r0x, r1x, dictionaryFS["2,0"]]]
+        reels = [[dictionaryFS["0,0"]], [r0x, dictionaryFS["1,0"]],
+                 [r0x, r1x, dictionaryFS["2,0"]]]
         # caso R[0] no tiene
         rest = []
     elif fs == 3:
         if mult == 1:
-            reels = [[dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,0"]]]
+            reels = [[dictionaryFS["0,1"], dictionaryFS["1,1"],
+                      dictionaryFS["2,1"], dictionaryFS["3,0"]]]
         elif mult == 2:
             reels = [
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,0"]]
+                [dictionaryFS["0,2"], dictionaryFS["1,1"],
+                    dictionaryFS["2,1"], dictionaryFS["3,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"],
+                    dictionaryFS["2,1"], dictionaryFS["3,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"],
+                    dictionaryFS["2,2"], dictionaryFS["3,0"]]
             ]
         elif mult == 4:
             reels = [
-                [dictionaryFS["0,2"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,0"]],
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,2"], dictionaryFS["3,0"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,2"],
+                    dictionaryFS["2,1"], dictionaryFS["3,0"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,1"],
+                    dictionaryFS["2,2"], dictionaryFS["3,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"],
+                    dictionaryFS["2,2"], dictionaryFS["3,0"]],
             ]
     elif fs == 4:
         if mult == 1:
@@ -259,20 +285,30 @@ def reels_round_set_SN(dictionaryFS, fs=0, mult=1):
                       dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,0"]]]
         elif mult == 2:
             reels = [
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,1"], dictionaryFS["4,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,2"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"],
+                    dictionaryFS["3,1"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,2"], dictionaryFS["4,0"]],
             ]
         elif mult == 4:
             reels = [
-                [dictionaryFS["0,2"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,0"]],
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,1"], dictionaryFS["4,0"]],
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,2"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,2"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,2"],
+                    dictionaryFS["3,1"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,2"], dictionaryFS["4,0"]],
 
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,2"], dictionaryFS["3,1"], dictionaryFS["4,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,2"], dictionaryFS["4,0"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,2"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,2"],
+                    dictionaryFS["3,1"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"],
+                    dictionaryFS["3,2"], dictionaryFS["4,0"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"],
+                    dictionaryFS["3,2"], dictionaryFS["4,0"]],
             ]
     elif fs == 5:
         if mult == 1:
@@ -280,29 +316,44 @@ def reels_round_set_SN(dictionaryFS, fs=0, mult=1):
                       dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,1"]]]
         elif mult == 2:
             reels = [
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,1"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,2"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,2"]]
+                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"],
+                    dictionaryFS["3,1"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,2"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,2"]]
             ]
         elif mult == 4:
             reels = [
-                [dictionaryFS["0,2"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,1"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,2"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,2"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,2"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,2"],
+                    dictionaryFS["3,1"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,2"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,2"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,2"]],
 
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,2"], dictionaryFS["3,1"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,2"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"], dictionaryFS["3,1"], dictionaryFS["4,2"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,2"],
+                    dictionaryFS["3,1"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"],
+                    dictionaryFS["3,2"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,2"], dictionaryFS["2,1"],
+                    dictionaryFS["3,1"], dictionaryFS["4,2"]],
 
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,2"], dictionaryFS["4,1"]],
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"], dictionaryFS["3,1"], dictionaryFS["4,2"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"],
+                    dictionaryFS["3,2"], dictionaryFS["4,1"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,2"],
+                    dictionaryFS["3,1"], dictionaryFS["4,2"]],
 
-                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"], dictionaryFS["3,2"], dictionaryFS["4,2"]],
+                [dictionaryFS["0,1"], dictionaryFS["1,1"], dictionaryFS["2,1"],
+                    dictionaryFS["3,2"], dictionaryFS["4,2"]],
             ]
-    reels =list(filter(lambda x: [] not in x, reels))
+    reels = list(filter(lambda x: [] not in x, reels))
     for r in reels:
         for i in range(len(r), 5):
             new_reel = []
@@ -312,9 +363,6 @@ def reels_round_set_SN(dictionaryFS, fs=0, mult=1):
         # caso R[0] tiene y R[1] no tiene
 
     FSReelsDict[str(fs * mult * 5)] = reels
-
-
-
 
 
 def reel_with_nSW(reels_set, i, n):
@@ -342,6 +390,7 @@ FSReelsDict
 
 # for key in reels_roud_set_FSDict:
 
+
 def lengh_mult(reel_set, i):
     cols = 1
     for col in reel_set[total_reels-i:total_reels]:
@@ -351,47 +400,34 @@ def lengh_mult(reel_set, i):
         cols *= w
     return cols
 
+
 print("start")
-gm_Total = [0,0,0]
+gm_Total = [0, 0, 0]
 for key in FSReelsDict:
-    key_total = [0,0,0]
+    key_total = [0, 0, 0]
     for reel_set_key in FSReelsDict[key]:
-        lengths_mult_array = [lengh_mult(reel_set_key, i) for i in range(0,total_reels + 1)]   
-        print(lengths_mult_array)  
-        result = compute_combinations_GM(reels_round_set=reel_set_key, lengths_mult_array=lengths_mult_array)
-        for i in range(0,3):
+        lengths_mult_array = [lengh_mult(reel_set_key, i)
+                              for i in range(0, total_reels + 1)]
+        # print(lengths_mult_array)
+        result = compute_combinations_GM(
+            reels_round_set=reel_set_key, lengths_mult_array=lengths_mult_array)
+        for i in range(0, 3):
             key_total[i] += result[i]
             gm_Total[i] += result[i]
-    print("ketotal:", print("gmto", gm_Total))
     FSGMPDict[key] = key_total
-    key_file = open(key +".json", "a")
-    key_file.write(str(key_total))
-    key_file.close()
-tot_file = open("total.json", "a")
-tot_file.write(str(gm_Total))
-tot_file.close()
-all_keys_file = open("allKeysGMP.json", "a")
-all_keys_file.write(str(FSGMPDict))
-all_keys_file.close()
+    # key_file = open(key + ".json", "a")
+    # key_file.write(str(key_total))
+    # key_file.close()
+# tot_file = open("total.json", "a")
+# tot_file.write(str(gm_Total))
+# tot_file.close()
+# all_keys_file = open("allKeysGMP.json", "a")
+# all_keys_file.write(str(FSGMPDict))
+# all_keys_file.close()
 print("gmtotal", gm_Total)
 print("end")
 
+# [[[['SBA', ''], 3]], [[['SBA', ''], 3]], [[['SBE', ''], 3]], [[['WBA', ''], 3]],
+#     [[['SBA', ''], 1], [['SBE', ''], 1], [['BAE', ''], 1], [['SAE', ''], 1]]]
 
-# print("g,m,p:", gm_Total)
-
-
-# print("start")
-# total = 0
-# for key in FSReelsDict:
-#     tkey = 0
-#     for reel in FSReelsDict[key]:
-#         cols = 1
-#         for col in reel:
-#             w = 0
-#             for word in col:
-#                 w += word[1]
-#             cols *= w
-#         tkey += cols
-#     total += tkey
-# print("totalCout", total)
-# print("finish")
+# reels = ["ASB", "SAB", "SEB", "ABW", "ASBE"]

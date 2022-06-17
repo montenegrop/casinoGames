@@ -1,22 +1,21 @@
 import copy
 from time_decorator import timeit
 
-
 wild = "W"
 total_reels = 5
 payments = {
-    'A': {'1': 0, '2': 3, '3': 6, '4': 25, '5': 80},
-    'B': {'1': 0, '2': 3, '3': 6, '4': 25, '5': 80},
-    'C': {'1': 0, '2': 0, '3': 6, '4': 25, '5': 100},
-    'D': {'1': 0, '2': 0, '3': 6, '4': 25, '5': 100},
-    'E': {'1': 0, '2': 0, '3': 12, '4': 40, '5': 150},
-    'F': {'1': 0, '2': 0, '3': 12, '4': 80, '5': 200},
-    'G': {'1': 0, '2': 0, '3': 20, '4': 100, '5': 400},
-    'H': {'1': 0, '2': 0, '3': 30, '4': 200, '5': 500},
-    'I': {'1': 0, '2': 0, '3': 50, '4': 400, '5': 1000},
-    'J': {'1': 0, '2': 0, '3': 100, '4': 500, '5': 1500},
-    'S': {'1': 0, '2': 0, '3': 5, '4': 20, '5': 50},
-    'W': {'1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
+    'A': {"0": 0, '1': 0, '2': 3, '3': 6, '4': 25, '5': 80},
+    'B': {"0": 0, '1': 0, '2': 3, '3': 6, '4': 25, '5': 80},
+    'C': {"0": 0, '1': 0, '2': 0, '3': 6, '4': 25, '5': 100},
+    'D': {"0": 0, '1': 0, '2': 0, '3': 6, '4': 25, '5': 100},
+    'E': {"0": 0, '1': 0, '2': 0, '3': 12, '4': 40, '5': 150},
+    'F': {"0": 0, '1': 0, '2': 0, '3': 12, '4': 80, '5': 200},
+    'G': {"0": 0, '1': 0, '2': 0, '3': 20, '4': 100, '5': 400},
+    'H': {"0": 0, '1': 0, '2': 0, '3': 30, '4': 200, '5': 500},
+    'I': {"0": 0, '1': 0, '2': 0, '3': 50, '4': 400, '5': 1000},
+    'J': {"0": 0, '1': 0, '2': 0, '3': 100, '4': 500, '5': 1500},
+    'S': {"0": 0, '1': 0, '2': 0, '3': 5, '4': 20, '5': 50},
+    'W': {"0": 0, '1': 0, '2': 0, '3': 0, '4': 0, '5': 0}
 }
 free_spins_list = [0, 0, 0, 15, 20, 25]
 free_spins_symbol = "S"
@@ -35,21 +34,22 @@ def compute_combinations_GM(reels_round_set: list):
             r_chains = copy.deepcopy(chains)
             rg = 0
             rm = 0
-            for key in r_chains:
-                if key[0] in r[0][0]:
-                    r_chains[key][0] += 1
-                    if key[0] == r[0][1]:
-                        r_chains[key][1] *= 2
-
             keys = list(r_chains.keys())
             if "W" in r[0][0]:
                 for key in keys:
                     r_chains[key + "w" +
-                             str(index)] = [index + 1, r[0][0].count("W")]
+                             str(index)] = [index + 1, r[0][0].count("W") * r_chains[key][1]]
+
+            for key in keys:
+                if key[0] in r[0][0]:
+                    r_chains[key][0] += 1
+                    if key[0] == r[0][1]:
+                        reps = r[0][0].count(key[0])
+                        r_chains[key][1] *= reps
 
             for key in keys:
                 if r_chains[key][0] == index:
-                    key_win = payments[key[0]][str(index + 1)] * \
+                    key_win = payments[key[0]][str(index)] * \
                         r_factor * \
                         lengths_mult[total_reels-index-1] * \
                         r_chains[key][1]
@@ -74,7 +74,7 @@ def compute_combinations_GM(reels_round_set: list):
                             r_chains[key][1]
                         rg += key_win
                         if key[0] == "S":
-                            key_spins = free_spins_list[index] * \
+                            key_spins = free_spins_list[index + 1] * \
                                 r_factor * \
                                 lengths_mult[total_reels -
                                              index-1] * \
@@ -135,6 +135,8 @@ def to_set(reel_round):
             word = word + sym
         if len(word) < 3:
             word = word + col[0][1]
+        if len(word) < 3:
+            word = word + col[0][1]
         col[0][0] = word
 
     return s
@@ -145,12 +147,10 @@ visible = [3, 3, 3, 3, 3]
 reels_round_set = [to_set(reel_round(reel, visible[i]))
                    for (i, reel) in enumerate(normal_reels)]
 
-print(reels_round_set[0][0:10])
-
 
 # print("start")
 # gm_Total = compute_combinations_GM(reels_round_set=reels_round_set)
-# tot_file = open("letters.json", "a")
+# tot_file = open("final_4.json", "a")
 # tot_file.write(str(gm_Total))
 # tot_file.close()
 # print("end")
